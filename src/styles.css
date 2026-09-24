@@ -367,7 +367,7 @@ a {
   position: fixed;
   left: 16px;
   right: 16px;
-  bottom: calc(env(safe-area-inset-bottom) + 20px);
+  bottom: calc(env(safe-area-inset-bottom) + 84px); /* 画面下のマーカーのボタンに重ねない */
   z-index: 30;
   padding: 12px 16px;
   border-radius: 10px;
@@ -375,4 +375,147 @@ a {
   color: var(--bg);
   font-size: 15px;
   text-align: center;
+}
+
+/* ---- マーカー ---- */
+:root {
+  --mk-yellow: #ffe45c;
+  --mk-red: #ffb0c0;
+  --mk-blue: #a9d3ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --mk-yellow: #6b5a00;
+    --mk-red: #7a2e40;
+    --mk-blue: #1f4d7a;
+  }
+}
+
+.mk {
+  color: inherit;
+  border-radius: 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.mk-yellow { background: var(--mk-yellow); }
+.mk-red { background: var(--mk-red); }
+.mk-blue { background: var(--mk-blue); }
+
+/* 案②: マーカーモード中は指の動きをスクロールではなく「なぞり」に使う */
+.law.painting {
+  touch-action: none;
+  -webkit-touch-callout: none;
+  cursor: crosshair;
+}
+
+.mk-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 10px 12px calc(env(safe-area-inset-bottom) + 10px);
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -2px 8px rgb(0 0 0 / 0.08);
+}
+
+.mk-btn {
+  flex: 1;
+  max-width: 88px;
+  height: 44px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.mk-btn-yellow { background: var(--mk-yellow); }
+.mk-btn-red { background: var(--mk-red); }
+.mk-btn-blue { background: var(--mk-blue); }
+.mk-btn-erase { background: var(--bg); border-color: var(--line); }
+
+.mk-btn[aria-pressed='true'] {
+  border-color: var(--text);
+}
+
+.mk-done {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.mk-fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(env(safe-area-inset-bottom) + 20px);
+  z-index: 15;
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 24px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+}
+
+/* ---- ホームの設定欄 ---- */
+.panel {
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.panel-note {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.panel-row {
+  display: flex;
+  gap: 8px;
+}
+
+.panel-btn {
+  flex: 1;
+  height: 44px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+}
+
+.op {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 0;
+}
+
+.op + .op {
+  border-top: 1px solid var(--line);
+}
+
+.op input {
+  margin-top: 5px;
+}
+
+.op-note {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
 }

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { loadIndex } from './data.js';
+import { requestPersist } from './db.js';
 import { parseQuery } from './search.js';
 import Home from './Home.jsx';
 import LawView from './LawView.jsx';
@@ -18,14 +19,35 @@ export function lawHref(lawId, key, para) {
   return '#/' + ['law', lawId, key, para].filter((x) => x != null && x !== '').map(encodeURIComponent).join('/');
 }
 
+// マーカーの操作方法（試作の2案。実機で比べて採用案を決めたらこの設定ごと消す）
+const OP_KEY = 'ropo-marker-op';
+function loadOp() {
+  try {
+    return localStorage.getItem(OP_KEY) === 'paint' ? 'paint' : 'select';
+  } catch {
+    return 'select';
+  }
+}
+
 export default function App() {
   const [laws, setLaws] = useState(null);
   const [loadError, setLoadError] = useState('');
   const [route, setRoute] = useState(parseHash);
   const [message, setMessage] = useState('');
   const [query, setQuery] = useState('');
+  const [op, setOpState] = useState(loadOp);
+
+  const setOp = useCallback((v) => {
+    setOpState(v);
+    try {
+      localStorage.setItem(OP_KEY, v);
+    } catch {
+      // 保存できなくても今回の起動中は切り替わる
+    }
+  }, []);
 
   useEffect(() => {
+    requestPersist();
     loadIndex().then(setLaws, (e) => setLoadError(e.message));
     const onHash = () => setRoute(parseHash());
     window.addEventListener('hashchange', onHash);
@@ -75,8 +97,8 @@ export default function App() {
   if (loadError) body = <p className="notice">{loadError}</p>;
   else if (!laws) body = <p className="notice">読み込み中…</p>;
   else if (route.lawId)
-    body = <LawView laws={laws} route={route} searchBox={searchBox} onMessage={setMessage} />;
-  else body = <Home laws={laws} searchBox={searchBox} />;
+    body = <LawView laws={laws} route={route} searchBox={searchBox} onMessage={setMessage} op={op} />;
+  else body = <Home laws={laws} searchBox={searchBox} op={op} setOp={setOp} onMessage={setMessage} />;
 
   return (
     <>

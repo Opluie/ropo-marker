@@ -18,7 +18,7 @@ py -m unittest scripts/test_convert.py -v
 ```
 npm install
 npm run dev      # 開発用サーバー
-npm test         # 検索のテスト
+npm test         # 検索・マーカー計算のテスト
 npm run build    # dist/ に公開用ファイルを出力
 ```
 

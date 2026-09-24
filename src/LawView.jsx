@@ -1,7 +1,12 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { loadLaw } from './data.js';
 import { findArticleKey } from './search.js';
 import { lawHref } from './App.jsx';
+import { getMarkers, saveMarkers } from './db.js';
+import { COLORS, ERASE, artKeyOf, itemLoc, paint, paraLoc, segments, textsByLoc } from './markers.js';
+import { caretAt, currentRange, rangeToPieces } from './selection.js';
+
+const COLOR_LABEL = { yellow: '黄', red: '赤', blue: '青', [ERASE]: '消す' };
 
 /**
  * 要素まで移動する。画面外の条は描画を省略している（content-visibility）ため、
@@ -47,25 +52,45 @@ function Toc({ nodes, lawId, onPick, depth = 0 }) {
   );
 }
 
-function Items({ items }) {
+/** 本文（塗れる単位）。loc が無ければ（附則）塗れない素の文字 */
+function Text({ text, loc, marks }) {
+  if (!loc) return text;
+  const own = marks?.filter((m) => m.loc === loc);
   return (
-    <ul className="items">
-      {items.map((it, i) =>
-        it.kind === 'unsupported' ? (
-          <li key={i} className="unsupported">{it.text}</li>
+    <span data-loc={loc}>
+      {segments(text, own).map((s, i) =>
+        s.color ? (
+          <mark key={i} className={`mk mk-${s.color}`}>
+            {s.text}
+          </mark>
         ) : (
-          <li key={i}>
-            <span className="item-title">{it.title}</span>
-            {it.text}
-            {it.items && <Items items={it.items} />}
-          </li>
+          s.text
         ),
       )}
+    </span>
+  );
+}
+
+function Items({ items, parentLoc, marks }) {
+  return (
+    <ul className="items">
+      {items.map((it, i) => {
+        if (it.kind === 'unsupported') return <li key={i} className="unsupported">{it.text}</li>;
+        const loc = parentLoc && itemLoc(parentLoc, it.num);
+        return (
+          <li key={i}>
+            <span className="item-title">{it.title}</span>
+            <Text text={it.text} loc={loc} marks={marks} />
+            {it.items && <Items items={it.items} parentLoc={loc} marks={marks} />}
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
-const Article = memo(function Article({ a, idPrefix }) {
+// marks はこの条のマーカー。変わった条だけ描き直すため、条ごとの配列を渡す
+const Article = memo(function Article({ a, idPrefix, markable, marks }) {
   return (
     <article id={`${idPrefix}${a.key}`} className="art">
       {a.caption && <div className="caption">{a.caption}</div>}
@@ -81,9 +106,9 @@ const Article = memo(function Article({ a, idPrefix }) {
               ) : (
                 p.label && <span className="para-num">{p.label}</span>
               )}
-              {p.text}
+              <Text text={p.text} loc={markable && paraLoc(a.key, p.num)} marks={marks} />
             </p>
-            {p.items && <Items items={p.items} />}
+            {p.items && <Items items={p.items} parentLoc={markable && paraLoc(a.key, p.num)} marks={marks} />}
           </div>
         ),
       )}
@@ -91,11 +116,181 @@ const Article = memo(function Article({ a, idPrefix }) {
   );
 });
 
-export default function LawView({ laws, route, searchBox, onMessage }) {
+/** マーカーの一覧 → 条ごとの配列 */
+function groupByArticle(list) {
+  const map = new Map();
+  for (const m of list) {
+    const k = artKeyOf(m.loc);
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(m);
+  }
+  return map;
+}
+
+function newId() {
+  return crypto.randomUUID?.() ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+}
+
+/** 開いている法令のマーカーの読み込みと、選択範囲に塗る処理 */
+function useMarkers(law, mainRef, onMessage) {
+  const [byArt, setByArt] = useState(() => new Map());
+  const texts = useMemo(() => (law ? textsByLoc(law) : null), [law]);
+
+  useEffect(() => {
+    setByArt(new Map());
+    if (!law) return;
+    let alive = true;
+    getMarkers(law.lawId).then(
+      (list) => alive && setByArt(groupByArticle(list)),
+      () => onMessage('マーカーを読み込めませんでした'),
+    );
+    return () => {
+      alive = false;
+    };
+  }, [law, onMessage]);
+
+  const apply = useCallback(
+    async (color, range) => {
+      const pieces = rangeToPieces(range, mainRef.current);
+      if (!pieces.length) return;
+      const now = new Date().toISOString();
+      const put = [];
+      const del = [];
+      for (const pc of pieces) {
+        const existing = (byArt.get(artKeyOf(pc.loc)) ?? []).filter((m) => m.loc === pc.loc);
+        const r = paint(existing, { lawId: law.lawId, color, ...pc }, texts.get(pc.loc), { now, newId });
+        put.push(...r.put);
+        del.push(...r.del);
+      }
+      if (!put.length && !del.length) return;
+      try {
+        await saveMarkers(put, del);
+      } catch {
+        onMessage('マーカーを保存できませんでした');
+        return;
+      }
+      // 変わった条の配列だけ作り直す（ほかの条は描き直さない）
+      setByArt((prev) => {
+        const next = new Map(prev);
+        const gone = new Set(del);
+        for (const k of new Set(pieces.map((pc) => artKeyOf(pc.loc)))) {
+          const fresh = put.filter((m) => artKeyOf(m.loc) === k);
+          const ids = new Set(fresh.map((m) => m.id));
+          next.set(k, [...(prev.get(k) ?? []).filter((m) => !gone.has(m.id) && !ids.has(m.id)), ...fresh]);
+        }
+        return next;
+      });
+    },
+    [byArt, law, texts, mainRef, onMessage],
+  );
+
+  return { byArt, apply };
+}
+
+/** 案①: 本文を選択している間だけ画面下に色ボタンを出す */
+function SelectBar({ mainRef, apply }) {
+  const [range, setRange] = useState(null);
+
+  useEffect(() => {
+    const onChange = () => setRange(mainRef.current && currentRange(mainRef.current));
+    document.addEventListener('selectionchange', onChange);
+    return () => document.removeEventListener('selectionchange', onChange);
+  }, [mainRef]);
+
+  if (!range) return null;
+  // 指が触れた時点で塗る。離す頃にはスマホが選択を解除していることがあるため
+  const press = (color) => (e) => {
+    e.preventDefault();
+    apply(color, range);
+    window.getSelection()?.removeAllRanges();
+    setRange(null);
+  };
+  return (
+    <div className="mk-bar" role="toolbar" aria-label="マーカー">
+      {[...COLORS, ERASE].map((c) => (
+        <button key={c} className={`mk-btn mk-btn-${c}`} onPointerDown={press(c)}>
+          {COLOR_LABEL[c]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** 案②: マーカーモード中は指でなぞった範囲を塗る（モード中は指でスクロールできない） */
+function PaintBar({ mainRef, apply }) {
+  const [on, setOn] = useState(false);
+  const [pen, setPen] = useState('yellow');
+
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!on || !main) return;
+    const sel = window.getSelection();
+    let start = null;
+    const down = (e) => {
+      if (!e.isPrimary) return;
+      start = caretAt(e.clientX, e.clientY);
+      if (!start) return;
+      e.preventDefault();
+      main.setPointerCapture(e.pointerId);
+      sel.removeAllRanges();
+    };
+    // なぞっている間はブラウザの選択範囲で塗る場所を見せ、指を離したら案①と同じ処理で塗る
+    const move = (e) => {
+      if (!start) return;
+      const cur = caretAt(e.clientX, e.clientY);
+      if (cur) sel.setBaseAndExtent(start.node, start.offset, cur.node, cur.offset);
+    };
+    const up = () => {
+      if (!start) return;
+      start = null;
+      const range = currentRange(main); // 下から上になぞっても前→後の順に直っている
+      sel.removeAllRanges();
+      if (range) apply(pen, range);
+    };
+    const block = (e) => e.preventDefault(); // 長押しの選択メニュー・スクロールを止める
+    const events = [
+      ['pointerdown', down],
+      ['pointermove', move],
+      ['pointerup', up],
+      ['pointercancel', up],
+      ['touchstart', block],
+      ['contextmenu', block],
+    ];
+    main.classList.add('painting');
+    events.forEach(([t, f]) => main.addEventListener(t, f, { passive: false }));
+    return () => {
+      main.classList.remove('painting');
+      events.forEach(([t, f]) => main.removeEventListener(t, f, { passive: false }));
+    };
+  }, [on, pen, apply, mainRef]);
+
+  if (!on)
+    return (
+      <button className="mk-fab" onClick={() => setOn(true)} aria-label="マーカーモード">
+        ✎
+      </button>
+    );
+  return (
+    <div className="mk-bar" role="toolbar" aria-label="マーカーモード">
+      {[...COLORS, ERASE].map((c) => (
+        <button key={c} className={`mk-btn mk-btn-${c}`} aria-pressed={pen === c} onClick={() => setPen(c)}>
+          {COLOR_LABEL[c]}
+        </button>
+      ))}
+      <button className="mk-btn mk-done" onClick={() => setOn(false)}>
+        終了
+      </button>
+    </div>
+  );
+}
+
+export default function LawView({ laws, route, searchBox, onMessage, op }) {
   const meta = laws.find((l) => l.lawId === route.lawId);
   const [law, setLaw] = useState(null);
   const [error, setError] = useState('');
   const [tocOpen, setTocOpen] = useState(false);
+  const mainRef = useRef(null);
+  const { byArt, apply } = useMarkers(law, mainRef, onMessage);
 
   useEffect(() => {
     setLaw(null);
@@ -171,7 +366,7 @@ export default function LawView({ laws, route, searchBox, onMessage }) {
         </div>
       )}
 
-      <main className="law">
+      <main className="law" ref={mainRef}>
         {error && <p className="notice">{error}</p>}
         {!law && !error && <p className="notice">読み込み中…</p>}
         {law && (
@@ -182,7 +377,7 @@ export default function LawView({ laws, route, searchBox, onMessage }) {
               {law.enforcementDate} 施行版
             </p>
             {law.articles.map((a) => (
-              <Article key={a.key} a={a} idPrefix="a-" />
+              <Article key={a.key} a={a} idPrefix="a-" markable marks={byArt.get(a.key)} />
             ))}
             {suppl.length > 0 && (
               <details id="suppl" className="suppl">
@@ -203,6 +398,7 @@ export default function LawView({ laws, route, searchBox, onMessage }) {
           </>
         )}
       </main>
+      {law && (op === 'paint' ? <PaintBar mainRef={mainRef} apply={apply} /> : <SelectBar mainRef={mainRef} apply={apply} />)}
     </>
   );
 }
