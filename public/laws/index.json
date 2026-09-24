@@ -1,0 +1,32 @@
+[
+ {
+  "lawId": "129AC0000000089",
+  "title": "民法",
+  "abbr": [
+   "民"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 1173
+ },
+ {
+  "lawId": "403AC0000000090",
+  "title": "借地借家法",
+  "abbr": [
+   "借地借家"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 61
+ },
+ {
+  "lawId": "417AC0000000086",
+  "title": "会社法",
+  "abbr": [
+   "会社"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-08-12",
+  "articleCount": 1078
+ }
+]

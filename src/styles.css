@@ -1,0 +1,378 @@
+:root {
+  --bg: #faf8f0;
+  --surface: #ffffff;
+  --text: #1c1c1a;
+  --muted: #6b6a63;
+  --line: #e2dfd3;
+  --accent: #1f3a34;
+  --accent-text: #faf8f0;
+  --flash: #fff1b8;
+  --font-law: 'Noto Serif JP', 'Noto Serif CJK JP', 'Yu Mincho', 'Hiragino Mincho ProN', serif;
+  --font-ui: system-ui, 'Noto Sans JP', 'Noto Sans CJK JP', 'Yu Gothic UI', sans-serif;
+  --bar-h: 104px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #161917;
+    --surface: #1f2321;
+    --text: #e8e6de;
+    --muted: #9a988f;
+    --line: #333833;
+    --accent: #2c4f47;
+    --accent-text: #f2efe4;
+    --flash: #4a4220;
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+}
+
+/* ---- 上部バー ---- */
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--accent);
+  color: var(--accent-text);
+  padding: calc(env(safe-area-inset-top) + 8px) 12px 10px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar-title {
+  flex: 1;
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-row .bar-title {
+  margin: 0;
+}
+
+.bar-btn {
+  min-width: 44px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 15px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bar-btn:first-child {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.bar-btn:disabled {
+  opacity: 0.4;
+}
+
+.search {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px; /* 16px 未満だとスマホで勝手に拡大される */
+}
+
+.search button {
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid color-mix(in srgb, var(--accent-text) 50%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent-text);
+  font: inherit;
+  font-size: 15px;
+}
+
+/* ---- 法令一覧 ---- */
+.home {
+  padding: 8px 16px 32px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.group {
+  margin: 20px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.law-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.law-list li + li {
+  border-top: 1px solid var(--line);
+}
+
+.law-list a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.law-name {
+  font-size: 17px;
+}
+
+.law-meta {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.source {
+  margin-top: 28px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---- 条文 ---- */
+.law {
+  padding: 4px 16px 40vh;
+  max-width: 720px;
+  margin: 0 auto;
+  font-family: var(--font-law);
+  font-size: 17px;
+  line-height: 1.85;
+}
+
+.law-head {
+  margin: 12px 0 20px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.art {
+  padding: 10px 0 12px;
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: calc(var(--bar-h) + env(safe-area-inset-top));
+  /* 画面外の条は描画を省略して、長い法令でも軽く保つ */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 180px;
+}
+
+.para {
+  scroll-margin-top: calc(var(--bar-h) + env(safe-area-inset-top));
+}
+
+.caption {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.para p {
+  margin: 0;
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
+.art-title {
+  font-weight: 700;
+  margin-right: 1em;
+}
+
+.para-num {
+  font-weight: 700;
+  margin-right: 0.5em;
+}
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding-left: 1em;
+}
+
+.items li {
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+}
+
+.items .items li {
+  text-indent: -1.5em;
+}
+
+.item-title {
+  display: inline-block;
+  min-width: 1.5em;
+  text-indent: 0;
+  font-weight: 700;
+  margin-right: 0.3em;
+}
+
+.unsupported {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.flash {
+  animation: flash 1.6s ease-out;
+}
+
+@keyframes flash {
+  0%,
+  40% {
+    background: var(--flash);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+.suppl {
+  margin-top: 28px;
+  scroll-margin-top: calc(var(--bar-h) + env(safe-area-inset-top));
+}
+
+.suppl summary {
+  padding: 12px 0;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.suppl-label {
+  margin: 20px 0 4px;
+  font-size: 15px;
+}
+
+.suppl-num {
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---- 目次 ---- */
+.drawer-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgb(0 0 0 / 0.4);
+}
+
+.drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(88vw, 420px);
+  overflow-y: auto;
+  background: var(--surface);
+  padding: calc(env(safe-area-inset-top) + 8px) 12px 32px;
+}
+
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  padding: 0 4px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.toc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc .toc {
+  padding-left: 1em;
+}
+
+.toc a,
+.toc-suppl {
+  display: block;
+  width: 100%;
+  padding: 9px 4px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 15px;
+  text-align: left;
+  text-decoration: none;
+}
+
+.toc.d0 > li > a {
+  font-weight: 600;
+}
+
+/* ---- 通知 ---- */
+.notice {
+  padding: 24px 16px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(env(safe-area-inset-bottom) + 20px);
+  z-index: 30;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 15px;
+  text-align: center;
+}
