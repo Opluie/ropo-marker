@@ -1,5 +1,7 @@
 // マーカーの保存先（IndexedDB）。端末の中にだけあり、リポジトリや公開サイトには出ない。
 
+import { upgradeColor } from './markers.js';
+
 const DB_NAME = 'ropo-marker';
 const STORE = 'markers';
 let dbPromise = null;
@@ -29,12 +31,12 @@ function done(req) {
 
 export async function getMarkers(lawId) {
   const db = await open();
-  return done(db.transaction(STORE).objectStore(STORE).index('lawId').getAll(lawId));
+  return (await done(db.transaction(STORE).objectStore(STORE).index('lawId').getAll(lawId))).map(upgradeColor);
 }
 
 export async function getAllMarkers() {
   const db = await open();
-  return done(db.transaction(STORE).objectStore(STORE).getAll());
+  return (await done(db.transaction(STORE).objectStore(STORE).getAll())).map(upgradeColor);
 }
 
 /** 保存と削除を1回の取引（トランザクション）でまとめて行う。途中で失敗したら全部取り消される */

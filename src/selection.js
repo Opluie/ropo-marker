@@ -30,13 +30,3 @@ export function currentRange(root) {
   if (!root.contains(range.commonAncestorContainer)) return null;
   return range.cloneRange();
 }
-
-/** 画面の座標にある文字の位置（案②のなぞり用） */
-export function caretAt(x, y) {
-  if (document.caretPositionFromPoint) {
-    const p = document.caretPositionFromPoint(x, y);
-    return p && { node: p.offsetNode, offset: p.offset };
-  }
-  const r = document.caretRangeFromPoint?.(x, y);
-  return r && { node: r.startContainer, offset: r.startOffset };
-}

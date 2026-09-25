@@ -4,7 +4,13 @@
 // 改正後に探し直すための quote（塗った文字列と前後の文字）で持つ。
 // 1つの loc の中でマーカーは重ならない（後から塗った色で上書きする）。
 
-export const COLORS = ['yellow', 'red', 'blue'];
+export const COLORS = ['yellow', 'green', 'orange'];
+// 試作版（2026-09-24）の色 → 今の色。端末に残っているマーカーと書き出しファイルを読み替える
+const OLD_COLORS = { red: 'orange', blue: 'green' };
+
+export function upgradeColor(m) {
+  return m && OLD_COLORS[m.color] ? { ...m, color: OLD_COLORS[m.color] } : m;
+}
 export const ERASE = 'erase';
 const CONTEXT = 20; // quote の前後に残す文字数
 
@@ -17,6 +23,11 @@ export function itemLoc(parentLoc, itemNum) {
 }
 export function artKeyOf(loc) {
   return loc.slice(0, loc.indexOf('/'));
+}
+
+/** マーカーが1本でもある項の番号（号のマーカーはその号が属する項に数える） */
+export function usedParas(marks = []) {
+  return new Set(marks.map((m) => Number(m.loc.split('/')[1].slice(1))));
 }
 
 /** 法令データから loc → 本文 の対応表を作る */
@@ -169,7 +180,8 @@ export function parseBackup(json) {
   if (data?.app !== BACKUP_APP || !Array.isArray(data.markers))
     throw new Error('六法マーカーの書き出しファイルではありません');
   if (data.version > BACKUP_VERSION) throw new Error('新しい版のアプリで書き出したファイルです。アプリを更新してください');
-  const bad = data.markers.filter((m) => !isMarker(m)).length;
+  const markers = data.markers.map(upgradeColor);
+  const bad = markers.filter((m) => !isMarker(m)).length;
   if (bad) throw new Error(`壊れたマーカーが ${bad} 件あります`);
-  return data.markers;
+  return markers;
 }

@@ -3,10 +3,11 @@ import { loadLaw } from './data.js';
 import { findArticleKey } from './search.js';
 import { lawHref } from './App.jsx';
 import { getMarkers, saveMarkers } from './db.js';
-import { COLORS, ERASE, artKeyOf, itemLoc, paint, paraLoc, segments, textsByLoc } from './markers.js';
-import { caretAt, currentRange, rangeToPieces } from './selection.js';
+import { COLORS, ERASE, artKeyOf, itemLoc, paint, paraLoc, segments, textsByLoc, usedParas } from './markers.js';
+import { currentRange, rangeToPieces } from './selection.js';
+import { indexAt, tocPaths } from './toc.js';
 
-const COLOR_LABEL = { yellow: '黄', red: '赤', blue: '青', [ERASE]: '消す' };
+const COLOR_LABEL = { yellow: '黄', green: '緑', orange: '橙', [ERASE]: '消す' };
 
 /**
  * 要素まで移動する。画面外の条は描画を省略している（content-visibility）ため、
@@ -33,18 +34,19 @@ function firstKey(node) {
   return null;
 }
 
-function Toc({ nodes, lawId, onPick, depth = 0 }) {
+/** 目次。path（今いる条を含む編・章・節…）に入っている項目を強調する */
+function Toc({ nodes, lawId, onPick, path, depth = 0 }) {
   return (
     <ul className={`toc d${depth}`}>
       {nodes
         .filter((n) => typeof n !== 'string')
         .map((n, i) => (
           <li key={i}>
-            <a href={lawHref(lawId, firstKey(n))} onClick={onPick}>
+            <a href={lawHref(lawId, firstKey(n))} onClick={onPick} className={path.includes(n) ? 'cur' : undefined}>
               {n.title}
             </a>
             {n.children.some((c) => typeof c !== 'string') && (
-              <Toc nodes={n.children} lawId={lawId} onPick={onPick} depth={depth + 1} />
+              <Toc nodes={n.children} lawId={lawId} onPick={onPick} path={path} depth={depth + 1} />
             )}
           </li>
         ))}
@@ -90,7 +92,10 @@ function Items({ items, parentLoc, marks }) {
 }
 
 // marks はこの条のマーカー。変わった条だけ描き直すため、条ごとの配列を渡す
+// マーカーを引いた項は番号に色を付ける（第1項は条名で示す。ほかの項だけなら条名は下線）
 const Article = memo(function Article({ a, idPrefix, markable, marks }) {
+  const used = usedParas(marks);
+  const titleClass = used.has(a.paragraphs[0]?.num) ? ' used' : used.size ? ' used-sub' : '';
   return (
     <article id={`${idPrefix}${a.key}`} className="art">
       {a.caption && <div className="caption">{a.caption}</div>}
@@ -102,9 +107,9 @@ const Article = memo(function Article({ a, idPrefix, markable, marks }) {
             {p.caption && <div className="caption">{p.caption}</div>}
             <p>
               {i === 0 && a.title ? (
-                <span className="art-title">{a.title}</span>
+                <span className={'art-title' + titleClass}>{a.title}</span>
               ) : (
-                p.label && <span className="para-num">{p.label}</span>
+                p.label && <span className={'para-num' + (used.has(p.num) ? ' used' : '')}>{p.label}</span>
               )}
               <Text text={p.text} loc={markable && paraLoc(a.key, p.num)} marks={marks} />
             </p>
@@ -187,7 +192,10 @@ function useMarkers(law, mainRef, onMessage) {
   return { byArt, apply };
 }
 
-/** 案①: 本文を選択している間だけ画面下に色ボタンを出す */
+/**
+ * 本文を選択している間だけ、画面上部（検索欄の下）に色ボタンを出す。
+ * 画面下は Android の検索パネル（かんたん検索）が重なって押せないため上に置く
+ */
 function SelectBar({ mainRef, apply }) {
   const [range, setRange] = useState(null);
 
@@ -216,81 +224,75 @@ function SelectBar({ mainRef, apply }) {
   );
 }
 
-/** 案②: マーカーモード中は指でなぞった範囲を塗る（モード中は指でスクロールできない） */
-function PaintBar({ mainRef, apply }) {
-  const [on, setOn] = useState(false);
-  const [pen, setPen] = useState('yellow');
+/** 画面上端にかかっている条の key（本則を過ぎていれば null＝附則） */
+function keyAtTop(law, header) {
+  const y = header.getBoundingClientRect().bottom + 1;
+  const bottomOf = (k) => document.getElementById(`a-${law.articles[k].key}`).getBoundingClientRect().bottom;
+  return law.articles[indexAt(law.articles.length, bottomOf, y)]?.key ?? null;
+}
 
+function crumbText(law, paths, key) {
+  if (!key) return '附則';
+  const a = law.articles.find((x) => x.key === key);
+  return [...(paths.get(key) ?? []).map((n) => n.title), a?.title].filter(Boolean).join(' › ');
+}
+
+/** 今いる場所を1行で出す（入りきらなければ先頭側を省略して、条名は必ず見せる）。押すと目次 */
+function Crumb({ law, paths, headerRef, onOpen }) {
+  const [key, setKey] = useState(undefined);
   useEffect(() => {
-    const main = mainRef.current;
-    if (!on || !main) return;
-    const sel = window.getSelection();
-    let start = null;
-    const down = (e) => {
-      if (!e.isPrimary) return;
-      start = caretAt(e.clientX, e.clientY);
-      if (!start) return;
-      e.preventDefault();
-      main.setPointerCapture(e.pointerId);
-      sel.removeAllRanges();
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      if (headerRef.current) setKey(keyAtTop(law, headerRef.current));
     };
-    // なぞっている間はブラウザの選択範囲で塗る場所を見せ、指を離したら案①と同じ処理で塗る
-    const move = (e) => {
-      if (!start) return;
-      const cur = caretAt(e.clientX, e.clientY);
-      if (cur) sel.setBaseAndExtent(start.node, start.offset, cur.node, cur.offset);
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
     };
-    const up = () => {
-      if (!start) return;
-      start = null;
-      const range = currentRange(main); // 下から上になぞっても前→後の順に直っている
-      sel.removeAllRanges();
-      if (range) apply(pen, range);
-    };
-    const block = (e) => e.preventDefault(); // 長押しの選択メニュー・スクロールを止める
-    const events = [
-      ['pointerdown', down],
-      ['pointermove', move],
-      ['pointerup', up],
-      ['pointercancel', up],
-      ['touchstart', block],
-      ['contextmenu', block],
-    ];
-    main.classList.add('painting');
-    events.forEach(([t, f]) => main.addEventListener(t, f, { passive: false }));
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
     return () => {
-      main.classList.remove('painting');
-      events.forEach(([t, f]) => main.removeEventListener(t, f, { passive: false }));
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
     };
-  }, [on, pen, apply, mainRef]);
-
-  if (!on)
-    return (
-      <button className="mk-fab" onClick={() => setOn(true)} aria-label="マーカーモード">
-        ✎
-      </button>
-    );
+  }, [law, headerRef]);
   return (
-    <div className="mk-bar" role="toolbar" aria-label="マーカーモード">
-      {[...COLORS, ERASE].map((c) => (
-        <button key={c} className={`mk-btn mk-btn-${c}`} aria-pressed={pen === c} onClick={() => setPen(c)}>
-          {COLOR_LABEL[c]}
-        </button>
-      ))}
-      <button className="mk-btn mk-done" onClick={() => setOn(false)}>
-        終了
-      </button>
-    </div>
+    <button className="crumb" onClick={onOpen} aria-label="今いる場所（押すと目次）">
+      <span dir="ltr">{key === undefined ? '\u00a0' : crumbText(law, paths, key)}</span>
+    </button>
   );
 }
 
-export default function LawView({ laws, route, searchBox, onMessage, op }) {
+export default function LawView({ laws, route, searchBox, onMessage }) {
   const meta = laws.find((l) => l.lawId === route.lawId);
   const [law, setLaw] = useState(null);
   const [error, setError] = useState('');
-  const [tocOpen, setTocOpen] = useState(false);
+  const [tocKey, setTocKey] = useState(undefined); // 目次を開いた時点で今いた条（undefined＝閉じている）
   const mainRef = useRef(null);
+  const headerRef = useRef(null);
+  const drawerRef = useRef(null);
   const { byArt, apply } = useMarkers(law, mainRef, onMessage);
+  const paths = useMemo(() => (law ? tocPaths(law.toc) : new Map()), [law]);
+  const tocOpen = tocKey !== undefined;
+  const openToc = () => setTocKey(keyAtTop(law, headerRef.current));
+  const closeToc = () => setTocKey(undefined);
+
+  // 上部バーの高さ（検索欄・今いる場所の行を含む）を CSS に渡す。条へ移動したときの位置合わせと色ボタンの位置に使う
+  useEffect(() => {
+    const el = headerRef.current;
+    const ro = new ResizeObserver(() => document.documentElement.style.setProperty('--bar-h', `${el.offsetHeight}px`));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // 目次を開いたら、今いる所が見える位置までスクロールする
+  useEffect(() => {
+    if (!tocOpen) return;
+    const cur = drawerRef.current?.querySelectorAll('a.cur');
+    cur?.[cur.length - 1]?.scrollIntoView({ block: 'center' });
+  }, [tocOpen]);
 
   useEffect(() => {
     setLaw(null);
@@ -325,29 +327,31 @@ export default function LawView({ laws, route, searchBox, onMessage, op }) {
 
   return (
     <>
-      <header className="bar">
+      <header className="bar" ref={headerRef}>
         <div className="bar-row">
           <a className="bar-btn" href="#/" aria-label="法令一覧へ">
             ‹
           </a>
           <h1 className="bar-title">{meta.title}</h1>
-          <button className="bar-btn" onClick={() => setTocOpen(true)} disabled={!law}>
+          <button className="bar-btn" onClick={openToc} disabled={!law}>
             目次
           </button>
         </div>
         {searchBox}
+        {law ? <Crumb law={law} paths={paths} headerRef={headerRef} onOpen={openToc} /> : <div className="crumb">{'\u00a0'}</div>}
       </header>
 
       {tocOpen && law && (
-        <div className="drawer-bg" onClick={() => setTocOpen(false)}>
-          <nav className="drawer" onClick={(e) => e.stopPropagation()} aria-label="目次">
+        <div className="drawer-bg" onClick={closeToc}>
+          <nav className="drawer" ref={drawerRef} onClick={(e) => e.stopPropagation()} aria-label="目次">
             <div className="drawer-head">
               <span>目次</span>
-              <button className="bar-btn" onClick={() => setTocOpen(false)}>
+              <button className="bar-btn" onClick={closeToc}>
                 閉じる
               </button>
             </div>
-            <Toc nodes={law.toc} lawId={law.lawId} onPick={() => setTocOpen(false)} />
+            <p className="drawer-cur">今いる場所: {crumbText(law, paths, tocKey)}</p>
+            <Toc nodes={law.toc} lawId={law.lawId} onPick={closeToc} path={paths.get(tocKey) ?? []} />
             {suppl.length > 0 && (
               <button
                 className="toc-suppl"
@@ -355,7 +359,7 @@ export default function LawView({ laws, route, searchBox, onMessage, op }) {
                   // URL の # は画面切り替えに使っているので、アンカーリンクにせず直接開いて移動する
                   const d = document.getElementById('suppl');
                   d.open = true;
-                  setTocOpen(false);
+                  closeToc();
                   d.scrollIntoView({ block: 'start' });
                 }}
               >
@@ -398,7 +402,7 @@ export default function LawView({ laws, route, searchBox, onMessage, op }) {
           </>
         )}
       </main>
-      {law && (op === 'paint' ? <PaintBar mainRef={mainRef} apply={apply} /> : <SelectBar mainRef={mainRef} apply={apply} />)}
+      {law && <SelectBar mainRef={mainRef} apply={apply} />}
     </>
   );
 }

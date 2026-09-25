@@ -8,6 +8,7 @@ import {
   resolve,
   segments,
   textsByLoc,
+  usedParas,
 } from './markers.js';
 
 const TEXT = '前項の規定による意思表示の無効は、善意の第三者に対抗することができない。';
@@ -178,7 +179,20 @@ describe('書き出し・読み込み', () => {
   });
 
   it('壊れたマーカーがあれば件数を示して断る', () => {
-    const file = makeBackup([marker, { ...marker, color: 'green' }], 'now');
+    const file = makeBackup([marker, { ...marker, color: 'purple' }], 'now');
     expect(() => parseBackup(file)).toThrow('1 件');
+  });
+});
+
+describe('色の読み替え・使った項', () => {
+  it('試作版の赤・青は橙・緑として読み込む', () => {
+    const old = { id: 'a', lawId: LAW, loc: LOC, start: 17, end: 23, color: 'red', quote: makeQuote(TEXT, 17, 23) };
+    const file = makeBackup([old, { ...old, id: 'b', color: 'blue' }], 'now');
+    expect(parseBackup(file).map((m) => m.color)).toEqual(['orange', 'green']);
+  });
+
+  it('マーカーのある項の番号を拾う（号のマーカーは項に数える）', () => {
+    expect([...usedParas([{ loc: '13/p1/i5' }, { loc: '13/p3' }, { loc: '13/p1' }])]).toEqual([1, 3]);
+    expect(usedParas(undefined).size).toBe(0);
   });
 });
