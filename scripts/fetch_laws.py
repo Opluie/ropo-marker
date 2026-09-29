@@ -71,6 +71,7 @@ def main():
         try:
             law_id = law.get("lawId") or resolve_law_id(law["title"])
             xml, meta = fetch(law_id, args.asof)
+            meta["title"] = law["title"]  # 旧い法律は e-Gov の題名が「昭和八年法律第四十二号（…）」形式のため、laws.json の題名で統一
             (RAW_DIR / f"{law_id}.xml").write_bytes(xml)
             (RAW_DIR / f"{law_id}.meta.json").write_text(
                 json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")

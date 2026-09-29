@@ -1,5 +1,175 @@
 [
  {
+  "lawId": "321CONSTITUTION",
+  "title": "日本国憲法",
+  "abbr": [
+   "憲"
+  ],
+  "group": "公法系",
+  "enforcementDate": "1947-05-03",
+  "articleCount": 103
+ },
+ {
+  "lawId": "419AC1000000051",
+  "title": "日本国憲法の改正手続に関する法律",
+  "abbr": [
+   "憲法改正手続"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 156
+ },
+ {
+  "lawId": "322AC0000000125",
+  "title": "国家賠償法",
+  "abbr": [
+   "国賠"
+  ],
+  "group": "公法系",
+  "enforcementDate": "1947-10-27",
+  "articleCount": 6
+ },
+ {
+  "lawId": "415AC0000000057",
+  "title": "個人情報の保護に関する法律",
+  "abbr": [
+   "個情"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-07-17",
+  "articleCount": 185
+ },
+ {
+  "lawId": "322AC1000000079",
+  "title": "国会法",
+  "abbr": [
+   "国会"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2025-05-23",
+  "articleCount": 188
+ },
+ {
+  "lawId": "325AC1000000100",
+  "title": "公職選挙法",
+  "abbr": [
+   "公選"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-09-03",
+  "articleCount": 418
+ },
+ {
+  "lawId": "322AC0000000005",
+  "title": "内閣法",
+  "abbr": [
+   "内閣"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-07-31",
+  "articleCount": 28
+ },
+ {
+  "lawId": "323AC0000000120",
+  "title": "国家行政組織法",
+  "abbr": [
+   "行組"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-07-17",
+  "articleCount": 29
+ },
+ {
+  "lawId": "405AC0000000088",
+  "title": "行政手続法",
+  "abbr": [
+   "行手"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-07-24",
+  "articleCount": 48
+ },
+ {
+  "lawId": "411AC0000000042",
+  "title": "行政機関の保有する情報の公開に関する法律",
+  "abbr": [
+   "行政機関情報公開"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-07-17",
+  "articleCount": 27
+ },
+ {
+  "lawId": "323AC0000000043",
+  "title": "行政代執行法",
+  "abbr": [
+   "行代"
+  ],
+  "group": "公法系",
+  "enforcementDate": "1962-10-01",
+  "articleCount": 6
+ },
+ {
+  "lawId": "426AC0000000068",
+  "title": "行政不服審査法",
+  "abbr": [
+   "行審"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 87
+ },
+ {
+  "lawId": "337AC0000000139",
+  "title": "行政事件訴訟法",
+  "abbr": [
+   "行訴"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 51
+ },
+ {
+  "lawId": "322AC0000000067",
+  "title": "地方自治法",
+  "abbr": [
+   "自治"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-09-24",
+  "articleCount": 520
+ },
+ {
+  "lawId": "322AC0000000059",
+  "title": "裁判所法",
+  "abbr": [
+   "裁"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 100
+ },
+ {
+  "lawId": "322AC0000000061",
+  "title": "検察庁法",
+  "abbr": [
+   "検察庁"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2025-06-01",
+  "articleCount": 32
+ },
+ {
+  "lawId": "324AC1000000205",
+  "title": "弁護士法",
+  "abbr": [
+   "弁護士"
+  ],
+  "group": "公法系",
+  "enforcementDate": "2025-10-01",
+  "articleCount": 164
+ },
+ {
   "lawId": "129AC0000000089",
   "title": "民法",
   "abbr": [
@@ -8,6 +178,127 @@
   "group": "民事系",
   "enforcementDate": "2026-06-24",
   "articleCount": 1173
+ },
+ {
+  "lawId": "131AC0000000011",
+  "title": "民法施行法",
+  "abbr": [
+   "民施"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2025-10-01",
+  "articleCount": 80
+ },
+ {
+  "lawId": "418AC0000000048",
+  "title": "一般社団法人及び一般財団法人に関する法律",
+  "abbr": [
+   "一般法人",
+   "一般社団"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 352
+ },
+ {
+  "lawId": "416AC0000000123",
+  "title": "不動産登記法",
+  "abbr": [
+   "不登"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 175
+ },
+ {
+  "lawId": "410AC0000000104",
+  "title": "動産及び債権の譲渡の対抗要件に関する民法の特例等に関する法律",
+  "abbr": [
+   "動産債権譲渡特例"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2025-06-06",
+  "articleCount": 22
+ },
+ {
+  "lawId": "337AC0000000069",
+  "title": "建物の区分所有等に関する法律",
+  "abbr": [
+   "区分所有"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-04-01",
+  "articleCount": 134
+ },
+ {
+  "lawId": "353AC0000000078",
+  "title": "仮登記担保契約に関する法律",
+  "abbr": [
+   "仮登記担保"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2005-04-01",
+  "articleCount": 20
+ },
+ {
+  "lawId": "308AC1000000042",
+  "title": "身元保証ニ関スル法律",
+  "abbr": [
+   "身元保証"
+  ],
+  "group": "民事系",
+  "enforcementDate": "1933-04-01",
+  "articleCount": 6
+ },
+ {
+  "lawId": "412AC0000000061",
+  "title": "消費者契約法",
+  "abbr": [
+   "消契"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 61
+ },
+ {
+  "lawId": "413AC0000000095",
+  "title": "電子消費者契約に関する民法の特例に関する法律",
+  "abbr": [
+   "電子消費者契約"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2020-04-01",
+  "articleCount": 3
+ },
+ {
+  "lawId": "336AC0000000159",
+  "title": "割賦販売法",
+  "abbr": [
+   "割賦"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2025-06-01",
+  "articleCount": 214
+ },
+ {
+  "lawId": "351AC0000000057",
+  "title": "特定商取引に関する法律",
+  "abbr": [
+   "特商"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-08-12",
+  "articleCount": 157
+ },
+ {
+  "lawId": "329AC0000000100",
+  "title": "利息制限法",
+  "abbr": [
+   "利息"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2010-06-18",
+  "articleCount": 9
  },
  {
   "lawId": "403AC0000000090",
@@ -20,6 +311,126 @@
   "articleCount": 61
  },
  {
+  "lawId": "411AC0000000081",
+  "title": "住宅の品質確保の促進等に関する法律",
+  "abbr": [
+   "住宅品質"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2025-06-01",
+  "articleCount": 113
+ },
+ {
+  "lawId": "412CO0000000064",
+  "title": "住宅の品質確保の促進等に関する法律施行令",
+  "abbr": [
+   "住宅品質令"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2009-09-01",
+  "articleCount": 6
+ },
+ {
+  "lawId": "418AC0000000108",
+  "title": "信託法",
+  "abbr": [
+   "信託"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 272
+ },
+ {
+  "lawId": "132AC1000000040",
+  "title": "失火ノ責任ニ関スル法律",
+  "abbr": [
+   "失火"
+  ],
+  "group": "民事系",
+  "enforcementDate": "1899-03-08",
+  "articleCount": 1
+ },
+ {
+  "lawId": "406AC0000000085",
+  "title": "製造物責任法",
+  "abbr": [
+   "製造物"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2020-04-01",
+  "articleCount": 6
+ },
+ {
+  "lawId": "330AC0000000097",
+  "title": "自動車損害賠償保障法",
+  "abbr": [
+   "自賠"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-04-01",
+  "articleCount": 115
+ },
+ {
+  "lawId": "322AC0000000224",
+  "title": "戸籍法",
+  "abbr": [
+   "戸"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-09-03",
+  "articleCount": 171
+ },
+ {
+  "lawId": "502AC0100000076",
+  "title": "生殖補助医療の提供等及びこれにより出生した子の親子関係に関する民法の特例に関する法律",
+  "abbr": [
+   "生殖補助医療"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2024-04-01",
+  "articleCount": 10
+ },
+ {
+  "lawId": "411AC0000000150",
+  "title": "任意後見契約に関する法律",
+  "abbr": [
+   "任意後見"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 11
+ },
+ {
+  "lawId": "411AC0000000152",
+  "title": "後見登記等に関する法律",
+  "abbr": [
+   "後見登記"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 17
+ },
+ {
+  "lawId": "430AC0000000073",
+  "title": "法務局における遺言書の保管等に関する法律",
+  "abbr": [
+   "遺言書保管"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 18
+ },
+ {
+  "lawId": "132AC0000000048",
+  "title": "商法",
+  "abbr": [
+   "商"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 264
+ },
+ {
   "lawId": "417AC0000000086",
   "title": "会社法",
   "abbr": [
@@ -28,5 +439,666 @@
   "group": "民事系",
   "enforcementDate": "2026-08-12",
   "articleCount": 1078
+ },
+ {
+  "lawId": "418M60000010012",
+  "title": "会社法施行規則",
+  "abbr": [
+   "会社規"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2024-04-01",
+  "articleCount": 303
+ },
+ {
+  "lawId": "418M60000010013",
+  "title": "会社計算規則",
+  "abbr": [
+   "会社計算"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2025-03-31",
+  "articleCount": 180
+ },
+ {
+  "lawId": "413AC0000000075",
+  "title": "社債、株式等の振替に関する法律",
+  "abbr": [
+   "振替"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 365
+ },
+ {
+  "lawId": "307AC0000000020",
+  "title": "手形法",
+  "abbr": [
+   "手"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2023-06-14",
+  "articleCount": 78
+ },
+ {
+  "lawId": "308AC0000000057",
+  "title": "小切手法",
+  "abbr": [
+   "小"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2020-04-01",
+  "articleCount": 62
+ },
+ {
+  "lawId": "408AC0000000109",
+  "title": "民事訴訟法",
+  "abbr": [
+   "民訴"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 475
+ },
+ {
+  "lawId": "415AC0000000109",
+  "title": "人事訴訟法",
+  "abbr": [
+   "人訴"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 56
+ },
+ {
+  "lawId": "354AC0000000004",
+  "title": "民事執行法",
+  "abbr": [
+   "民執"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 250
+ },
+ {
+  "lawId": "401AC0000000091",
+  "title": "民事保全法",
+  "abbr": [
+   "民保"
+  ],
+  "group": "民事系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 71
+ },
+ {
+  "lawId": "140AC0000000045",
+  "title": "刑法",
+  "abbr": [
+   "刑"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 301
+ },
+ {
+  "lawId": "425AC0000000086",
+  "title": "自動車の運転により人を死傷させる行為等の処罰に関する法律",
+  "abbr": [
+   "自動車運転死傷"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2026-07-21",
+  "articleCount": 6
+ },
+ {
+  "lawId": "323AC0000000131",
+  "title": "刑事訴訟法",
+  "abbr": [
+   "刑訴"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2026-08-13",
+  "articleCount": 724
+ },
+ {
+  "lawId": "411AC0000000137",
+  "title": "犯罪捜査のための通信傍受に関する法律",
+  "abbr": [
+   "通信傍受"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 39
+ },
+ {
+  "lawId": "416AC0000000063",
+  "title": "裁判員の参加する刑事裁判に関する法律",
+  "abbr": [
+   "裁判員"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2026-07-24",
+  "articleCount": 116
+ },
+ {
+  "lawId": "323AC0000000147",
+  "title": "検察審査会法",
+  "abbr": [
+   "検審"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 77
+ },
+ {
+  "lawId": "412AC0000000075",
+  "title": "犯罪被害者等の権利利益の保護を図るための刑事手続に付随する措置に関する法律",
+  "abbr": [
+   "犯罪被害者保護"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 49
+ },
+ {
+  "lawId": "323AC0000000168",
+  "title": "少年法",
+  "abbr": [
+   "少"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 98
+ },
+ {
+  "lawId": "417AC0000000050",
+  "title": "刑事収容施設及び被収容者等の処遇に関する法律",
+  "abbr": [
+   "刑事収容"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 294
+ },
+ {
+  "lawId": "323AC0000000136",
+  "title": "警察官職務執行法",
+  "abbr": [
+   "警職"
+  ],
+  "group": "刑事系",
+  "enforcementDate": "2025-06-01",
+  "articleCount": 8
+ },
+ {
+  "lawId": "416AC0000000075",
+  "title": "破産法",
+  "abbr": [
+   "破"
+  ],
+  "group": "倒産法",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 297
+ },
+ {
+  "lawId": "411AC0000000225",
+  "title": "民事再生法",
+  "abbr": [
+   "民再"
+  ],
+  "group": "倒産法",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 297
+ },
+ {
+  "lawId": "337AC0000000066",
+  "title": "国税通則法",
+  "abbr": [
+   "通則"
+  ],
+  "group": "租税法",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 194
+ },
+ {
+  "lawId": "340AC0000000033",
+  "title": "所得税法",
+  "abbr": [
+   "所税"
+  ],
+  "group": "租税法",
+  "enforcementDate": "2026-08-12",
+  "articleCount": 302
+ },
+ {
+  "lawId": "340AC0000000034",
+  "title": "法人税法",
+  "abbr": [
+   "法税"
+  ],
+  "group": "租税法",
+  "enforcementDate": "2026-08-12",
+  "articleCount": 262
+ },
+ {
+  "lawId": "322AC0000000054",
+  "title": "私的独占の禁止及び公正取引の確保に関する法律",
+  "abbr": [
+   "独禁"
+  ],
+  "group": "経済法",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 178
+ },
+ {
+  "lawId": "352CO0000000317",
+  "title": "私的独占の禁止及び公正取引の確保に関する法律施行令",
+  "abbr": [
+   "独禁令"
+  ],
+  "group": "経済法",
+  "enforcementDate": "2023-04-19",
+  "articleCount": 34
+ },
+ {
+  "lawId": "414AC1000000101",
+  "title": "入札談合等関与行為の排除及び防止並びに職員による入札等の公正を害すべき行為の処罰に関する法律",
+  "abbr": [
+   "入札談合"
+  ],
+  "group": "経済法",
+  "enforcementDate": "2026-09-24",
+  "articleCount": 10
+ },
+ {
+  "lawId": "331AC0000000120",
+  "title": "製造委託等に係る中小受託事業者に対する代金の支払の遅延等の防止に関する法律",
+  "abbr": [
+   "取適",
+   "下請"
+  ],
+  "group": "経済法",
+  "enforcementDate": "2026-01-01",
+  "articleCount": 16
+ },
+ {
+  "lawId": "337AC0000000134",
+  "title": "不当景品類及び不当表示防止法",
+  "abbr": [
+   "景表"
+  ],
+  "group": "経済法",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 52
+ },
+ {
+  "lawId": "334AC0000000121",
+  "title": "特許法",
+  "abbr": [
+   "特許"
+  ],
+  "group": "知的財産法",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 302
+ },
+ {
+  "lawId": "345AC0000000048",
+  "title": "著作権法",
+  "abbr": [
+   "著作"
+  ],
+  "group": "知的財産法",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 239
+ },
+ {
+  "lawId": "324AC0000000174",
+  "title": "労働組合法",
+  "abbr": [
+   "労組"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 91
+ },
+ {
+  "lawId": "322AC0000000049",
+  "title": "労働基準法",
+  "abbr": [
+   "労基"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2026-07-17",
+  "articleCount": 124
+ },
+ {
+  "lawId": "322M40000100023",
+  "title": "労働基準法施行規則",
+  "abbr": [
+   "労基規"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2026-04-01",
+  "articleCount": 110
+ },
+ {
+  "lawId": "419AC0000000128",
+  "title": "労働契約法",
+  "abbr": [
+   "労契"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2020-04-01",
+  "articleCount": 21
+ },
+ {
+  "lawId": "416AC0000000045",
+  "title": "労働審判法",
+  "abbr": [
+   "労審"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 36
+ },
+ {
+  "lawId": "347AC0000000113",
+  "title": "雇用の分野における男女の均等な機会及び待遇の確保等に関する法律",
+  "abbr": [
+   "均等"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2025-06-11",
+  "articleCount": 37
+ },
+ {
+  "lawId": "403AC0000000076",
+  "title": "育児休業、介護休業等育児又は家族介護を行う労働者の福祉に関する法律",
+  "abbr": [
+   "育介"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2025-10-01",
+  "articleCount": 79
+ },
+ {
+  "lawId": "405AC0000000076",
+  "title": "短時間労働者及び有期雇用労働者の雇用管理の改善等に関する法律",
+  "abbr": [
+   "パート有期"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2020-06-01",
+  "articleCount": 32
+ },
+ {
+  "lawId": "412AC0000000103",
+  "title": "会社分割に伴う労働契約の承継等に関する法律",
+  "abbr": [
+   "労働契約承継"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2015-05-01",
+  "articleCount": 8
+ },
+ {
+  "lawId": "322AC0000000050",
+  "title": "労働者災害補償保険法",
+  "abbr": [
+   "労災"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2026-07-17",
+  "articleCount": 98
+ },
+ {
+  "lawId": "341AC0000000132",
+  "title": "労働施策の総合的な推進並びに労働者の雇用の安定及び職業生活の充実等に関する法律",
+  "abbr": [
+   "労働施策"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2026-04-01",
+  "articleCount": 53
+ },
+ {
+  "lawId": "360AC0000000088",
+  "title": "労働者派遣事業の適正な運営の確保及び派遣労働者の保護等に関する法律",
+  "abbr": [
+   "派遣"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2026-04-01",
+  "articleCount": 94
+ },
+ {
+  "lawId": "346AC0000000068",
+  "title": "高年齢者等の雇用の安定等に関する法律",
+  "abbr": [
+   "高年法"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2022-10-01",
+  "articleCount": 60
+ },
+ {
+  "lawId": "335AC0000000123",
+  "title": "障害者の雇用の促進等に関する法律",
+  "abbr": [
+   "障害者雇用"
+  ],
+  "group": "労働法",
+  "enforcementDate": "2025-10-01",
+  "articleCount": 117
+ },
+ {
+  "lawId": "405AC0000000091",
+  "title": "環境基本法",
+  "abbr": [
+   "環境基本"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2026-07-17",
+  "articleCount": 47
+ },
+ {
+  "lawId": "409AC0000000081",
+  "title": "環境影響評価法",
+  "abbr": [
+   "環境アセス"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2026-07-17",
+  "articleCount": 80
+ },
+ {
+  "lawId": "343AC0000000097",
+  "title": "大気汚染防止法",
+  "abbr": [
+   "大防"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2026-07-01",
+  "articleCount": 112
+ },
+ {
+  "lawId": "345AC0000000138",
+  "title": "水質汚濁防止法",
+  "abbr": [
+   "水濁"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2026-07-01",
+  "articleCount": 64
+ },
+ {
+  "lawId": "414AC0000000053",
+  "title": "土壌汚染対策法",
+  "abbr": [
+   "土対"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2026-07-01",
+  "articleCount": 74
+ },
+ {
+  "lawId": "412AC0000000110",
+  "title": "循環型社会形成推進基本法",
+  "abbr": [
+   "循環基本"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2012-09-19",
+  "articleCount": 32
+ },
+ {
+  "lawId": "345AC0000000137",
+  "title": "廃棄物の処理及び清掃に関する法律",
+  "abbr": [
+   "廃掃"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2026-09-16",
+  "articleCount": 164
+ },
+ {
+  "lawId": "407AC0000000112",
+  "title": "容器包装に係る分別収集及び再商品化の促進等に関する法律",
+  "abbr": [
+   "容器包装"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2011-08-30",
+  "articleCount": 57
+ },
+ {
+  "lawId": "332AC0000000161",
+  "title": "自然公園法",
+  "abbr": [
+   "自然公園"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2026-07-01",
+  "articleCount": 105
+ },
+ {
+  "lawId": "410AC0000000117",
+  "title": "地球温暖化対策の推進に関する法律",
+  "abbr": [
+   "温対"
+  ],
+  "group": "環境法",
+  "enforcementDate": "2026-01-01",
+  "articleCount": 150
+ },
+ {
+  "lawId": "418AC0000000078",
+  "title": "法の適用に関する通則法",
+  "abbr": [
+   "通則法"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 43
+ },
+ {
+  "lawId": "361AC0000000084",
+  "title": "扶養義務の準拠法に関する法律",
+  "abbr": [
+   "扶養準拠法"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2007-01-01",
+  "articleCount": 8
+ },
+ {
+  "lawId": "339AC0000000100",
+  "title": "遺言の方式の準拠法に関する法律",
+  "abbr": [
+   "遺言準拠法"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2007-01-01",
+  "articleCount": 8
+ },
+ {
+  "lawId": "325AC0000000147",
+  "title": "国籍法",
+  "abbr": [
+   "国籍"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2025-06-01",
+  "articleCount": 21
+ },
+ {
+  "lawId": "421AC0000000024",
+  "title": "外国等に対する我が国の民事裁判権に関する法律",
+  "abbr": [
+   "対外国民事裁判権"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 22
+ },
+ {
+  "lawId": "423AC0000000052",
+  "title": "家事事件手続法",
+  "abbr": [
+   "家事"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 325
+ },
+ {
+  "lawId": "425AC0000000048",
+  "title": "国際的な子の奪取の民事上の側面に関する条約の実施に関する法律",
+  "abbr": [
+   "ハーグ実施"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2026-06-24",
+  "articleCount": 154
+ },
+ {
+  "lawId": "345AC0000000115",
+  "title": "民事訴訟手続に関する条約等の実施に伴う民事訴訟手続の特例等に関する法律",
+  "abbr": [
+   "民訴条約特例"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 31
+ },
+ {
+  "lawId": "505AC0000000016",
+  "title": "調停による国際的な和解合意に関する国際連合条約の実施に関する法律",
+  "abbr": [
+   "シンガポール条約実施"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2024-04-01",
+  "articleCount": 13
+ },
+ {
+  "lawId": "415AC0000000138",
+  "title": "仲裁法",
+  "abbr": [
+   "仲裁"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2026-05-21",
+  "articleCount": 62
+ },
+ {
+  "lawId": "332AC0000000172",
+  "title": "国際海上物品運送法",
+  "abbr": [
+   "国際海運"
+  ],
+  "group": "国際関係法（私法系）",
+  "enforcementDate": "2019-04-01",
+  "articleCount": 17
  }
 ]
