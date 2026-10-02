@@ -122,6 +122,28 @@ a {
   font-size: 16px; /* 16px 未満だとスマホで勝手に拡大される */
 }
 
+.view-filter {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.view-filter button {
+  flex: 1;
+  height: 32px;
+  border: 1px solid color-mix(in srgb, var(--accent-text) 45%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+}
+
+.view-filter button[aria-pressed='true'] {
+  background: var(--accent-text);
+  color: var(--accent);
+}
+
 .crumb {
   display: block;
   width: 100%;
@@ -180,7 +202,27 @@ a {
   border-top: 1px solid var(--line);
 }
 
+.law-list li {
+  display: flex;
+  align-items: stretch;
+}
+
+.fav-btn {
+  flex: none;
+  width: 52px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 22px;
+}
+
+.fav-btn.on {
+  color: #e0a800;
+}
+
 .law-list a {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: baseline;
   justify-content: space-between;

@@ -7,6 +7,12 @@ import { COLORS, ERASE, artKeyOf, itemLoc, paint, paraLoc, segments, textsByLoc,
 import { currentRange, rangeToPieces } from './selection.js';
 import { indexAt, tocPaths } from './toc.js';
 
+const FILTERS = [
+  ['all', '全て'],
+  ['marked', 'マーカーあり'],
+  ['unmarked', 'マーカーなし'],
+];
+
 const COLOR_LABEL = { yellow: '黄', green: '緑', orange: '橙', [ERASE]: '消す' };
 
 /**
@@ -224,11 +230,12 @@ function SelectBar({ mainRef, apply }) {
   );
 }
 
-/** 画面上端にかかっている条の key（本則を過ぎていれば null＝附則） */
-function keyAtTop(law, header) {
+/** 画面上端にかかっている条の key（本則を過ぎていれば null＝附則）。articles は今表示している条 */
+function keyAtTop(articles, header) {
+  if (!articles.length) return null;
   const y = header.getBoundingClientRect().bottom + 1;
-  const bottomOf = (k) => document.getElementById(`a-${law.articles[k].key}`).getBoundingClientRect().bottom;
-  return law.articles[indexAt(law.articles.length, bottomOf, y)]?.key ?? null;
+  const bottomOf = (k) => document.getElementById(`a-${articles[k].key}`).getBoundingClientRect().bottom;
+  return articles[indexAt(articles.length, bottomOf, y)]?.key ?? null;
 }
 
 function crumbText(law, paths, key) {
@@ -238,13 +245,13 @@ function crumbText(law, paths, key) {
 }
 
 /** 今いる場所を1行で出す（入りきらなければ先頭側を省略して、条名は必ず見せる）。押すと目次 */
-function Crumb({ law, paths, headerRef, onOpen }) {
+function Crumb({ law, articles, paths, headerRef, onOpen }) {
   const [key, setKey] = useState(undefined);
   useEffect(() => {
     let raf = 0;
     const update = () => {
       raf = 0;
-      if (headerRef.current) setKey(keyAtTop(law, headerRef.current));
+      if (headerRef.current) setKey(keyAtTop(articles, headerRef.current));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -257,7 +264,7 @@ function Crumb({ law, paths, headerRef, onOpen }) {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
     };
-  }, [law, headerRef]);
+  }, [law, articles, headerRef]);
   return (
     <button className="crumb" onClick={onOpen} aria-label="今いる場所（押すと目次）">
       <span dir="ltr">{key === undefined ? '\u00a0' : crumbText(law, paths, key)}</span>
@@ -270,13 +277,25 @@ export default function LawView({ laws, route, searchBox, onMessage }) {
   const [law, setLaw] = useState(null);
   const [error, setError] = useState('');
   const [tocKey, setTocKey] = useState(undefined); // 目次を開いた時点で今いた条（undefined＝閉じている）
+  const [filter, setFilter] = useState('all'); // 表示する条: 全て / マーカーのある条 / マーカーのない条
+  const [markedKeys, setMarkedKeys] = useState(() => new Set()); // 絞り込みを押した時点でマーカーのあった条
+  const [scrollTick, setScrollTick] = useState(0);
   const mainRef = useRef(null);
   const headerRef = useRef(null);
   const drawerRef = useRef(null);
   const { byArt, apply } = useMarkers(law, mainRef, onMessage);
   const paths = useMemo(() => (law ? tocPaths(law.toc) : new Map()), [law]);
+  // 絞り込みの対象は押した時点で固定する。塗った（消した）条がその場で消えると操作しづらいため。同じボタンをもう一度押すと更新する
+  const pickFilter = (f) => {
+    setMarkedKeys(new Set([...byArt].filter(([, ms]) => ms.length).map(([k]) => k)));
+    setFilter(f);
+  };
+  const shown = useMemo(() => {
+    if (!law || filter === 'all') return law?.articles ?? [];
+    return law.articles.filter((a) => markedKeys.has(a.key) === (filter === 'marked'));
+  }, [law, filter, markedKeys]);
   const tocOpen = tocKey !== undefined;
-  const openToc = () => setTocKey(keyAtTop(law, headerRef.current));
+  const openToc = () => setTocKey(keyAtTop(shown, headerRef.current));
   const closeToc = () => setTocKey(undefined);
 
   // 上部バーの高さ（検索欄・今いる場所の行を含む）を CSS に渡す。条へ移動したときの位置合わせと色ボタンの位置に使う
@@ -297,6 +316,7 @@ export default function LawView({ laws, route, searchBox, onMessage }) {
   useEffect(() => {
     setLaw(null);
     setError('');
+    setFilter('all');
     loadLaw(route.lawId).then(setLaw, (e) => setError(e.message));
   }, [route.lawId]);
 
@@ -314,14 +334,21 @@ export default function LawView({ laws, route, searchBox, onMessage }) {
     }
     const id = `a-${key}` + (route.para ? `-p${route.para}` : '');
     const el = document.getElementById(id) || document.getElementById(`a-${key}`);
+    if (!el) {
+      // 絞り込みで隠れている条への移動は、絞り込みを解いてからやり直す
+      setFilter('all');
+      setScrollTick((t) => t + 1);
+      return;
+    }
     if (route.para && !document.getElementById(id)) onMessage(`第${route.para}項はありません`);
     scrollSettled(el);
     el.classList.remove('flash');
     void el.offsetWidth; // アニメーションをやり直すため
     el.classList.add('flash');
-  }, [law, route, onMessage]);
+  }, [law, route, onMessage, scrollTick]);
 
-  const suppl = useMemo(() => law?.suppl ?? [], [law]);
+  // 附則はマーカーを引けないので、絞り込み中は出さない
+  const suppl = useMemo(() => (filter === 'all' ? law?.suppl ?? [] : []), [law, filter]);
 
   if (!meta) return <p className="notice">この法令は登載されていません。<a href="#/">一覧へ</a></p>;
 
@@ -338,7 +365,14 @@ export default function LawView({ laws, route, searchBox, onMessage }) {
           </button>
         </div>
         {searchBox}
-        {law ? <Crumb law={law} paths={paths} headerRef={headerRef} onOpen={openToc} /> : <div className="crumb">{'\u00a0'}</div>}
+        <div className="view-filter" role="group" aria-label="表示する条文">
+          {FILTERS.map(([f, label]) => (
+            <button key={f} aria-pressed={filter === f} disabled={!law} onClick={() => pickFilter(f)}>
+              {label}
+            </button>
+          ))}
+        </div>
+        {law ? <Crumb law={law} articles={shown} paths={paths} headerRef={headerRef} onOpen={openToc} /> : <div className="crumb">{'\u00a0'}</div>}
       </header>
 
       {tocOpen && law && (
@@ -380,7 +414,12 @@ export default function LawView({ laws, route, searchBox, onMessage }) {
               <br />
               {law.enforcementDate} 施行版
             </p>
-            {law.articles.map((a) => (
+            {!shown.length && (
+              <p className="notice">
+                {filter === 'marked' ? 'マーカーを引いた条文はありません' : 'マーカーのない条文はありません'}
+              </p>
+            )}
+            {shown.map((a) => (
               <Article key={a.key} a={a} idPrefix="a-" markable marks={byArt.get(a.key)} />
             ))}
             {suppl.length > 0 && (
