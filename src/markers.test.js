@@ -185,10 +185,10 @@ describe('書き出し・読み込み', () => {
 });
 
 describe('色の読み替え・使った項', () => {
-  it('試作版の赤・青は橙・緑として読み込む', () => {
+  it('試作版の青は緑として読み込み、廃止した橙・試作版の赤は読み込まない', () => {
     const old = { id: 'a', lawId: LAW, loc: LOC, start: 17, end: 23, color: 'red', quote: makeQuote(TEXT, 17, 23) };
-    const file = makeBackup([old, { ...old, id: 'b', color: 'blue' }], 'now');
-    expect(parseBackup(file).map((m) => m.color)).toEqual(['orange', 'green']);
+    const file = makeBackup([old, { ...old, id: 'b', color: 'blue' }, { ...old, id: 'c', color: 'orange' }], 'now');
+    expect(parseBackup(file).map((m) => m.id + m.color)).toEqual(['bgreen']);
   });
 
   it('マーカーのある項の番号を拾う（号のマーカーは項に数える）', () => {

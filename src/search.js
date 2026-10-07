@@ -17,13 +17,17 @@ export function kanjiToInt(s) {
   return total + cur;
 }
 
-/** 全角→半角・空白除去・漢数字→算用数字・「の」の別表記（- _ ‐）をそろえる */
+/**
+ * 全角→半角・空白除去・漢数字→算用数字・「の」の別表記（- _ ‐）をそろえる。
+ * テンキーで打てるよう、数字の後の「.」は項・号の区切りとして読む（94.2 → 94条2項・3-2.1.4 → 3条の2第1項第4号）
+ */
 export function normalize(q) {
   return q
     .normalize('NFKC')
     .replace(/\s+/g, '')
     .replace(/[〇一二三四五六七八九十百千]+/g, (m) => String(kanjiToInt(m)))
-    .replace(/[-_‐−ー](?=\d)/g, 'の');
+    .replace(/[-_‐−ー](?=\d)/g, 'の')
+    .replace(/(\d)\.(\d+)(?:\.(\d+))?$/, (_, d, para, item) => `${d}第${para}項` + (item ? `第${item}号` : ''));
 }
 
 const REF = /^第?(\d+)(?:条)?((?:の\d+)*)(?:第?(\d+)項)?(?:第?(\d+)号)?$/;

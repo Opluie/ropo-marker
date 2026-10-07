@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { loadIndex } from './data.js';
 import { requestPersist } from './db.js';
 import { parseQuery } from './search.js';
@@ -25,6 +25,21 @@ export default function App() {
   const [route, setRoute] = useState(parseHash);
   const [message, setMessage] = useState('');
   const [query, setQuery] = useState('');
+  // 条文画面の検索欄は最初からテンキー（条番号だけ打つことが多いため）。「あ」で通常のキーボードに切り替える
+  const [textKb, setTextKb] = useState(false);
+  const inputRef = useRef(null);
+  const refocus = useRef(false);
+  const numeric = !!route.lawId && !textKb;
+
+  // キーボードの種類は入力欄を選び直したときに変わるので、切り替えたら選び直す
+  useEffect(() => {
+    if (!refocus.current) return;
+    refocus.current = false;
+    const el = inputRef.current;
+    el?.blur();
+    const t = setTimeout(() => el?.focus(), 50);
+    return () => clearTimeout(t);
+  }, [textKb]);
 
   useEffect(() => {
     requestPersist();
@@ -40,6 +55,12 @@ export default function App() {
     return () => clearTimeout(t);
   }, [message]);
 
+  /** href へ移動する。同じ場所でも移動し直す（同じ条をもう一度検索したとき・戻るボタン） */
+  const go = useCallback((href) => {
+    if (location.hash === href) setRoute(parseHash());
+    else location.hash = href;
+  }, []);
+
   const onSearch = useCallback(
     (e) => {
       e.preventDefault();
@@ -49,26 +70,39 @@ export default function App() {
         setMessage(r.error);
         return;
       }
-      const href = lawHref(r.lawId, r.key, r.para);
-      if (location.hash === href) setRoute(parseHash()); // 同じ条をもう一度検索しても移動し直す
-      else location.hash = href;
+      go(lawHref(r.lawId, r.key, r.para));
       setQuery('');
+      setTextKb(false);
       document.activeElement?.blur(); // スマホのキーボードを閉じる
     },
-    [laws, query, route.lawId],
+    [laws, query, route.lawId, go],
   );
 
   const searchBox = (
     <form className="search" onSubmit={onSearch} role="search">
       <input
+        ref={inputRef}
         type="search"
-        inputMode="search"
+        inputMode={numeric ? 'numeric' : 'search'}
         enterKeyHint="go"
-        placeholder={route.lawId ? '条番号（例: 709・民94②）' : '例: 民709・会社2条1項'}
+        placeholder={numeric ? '条番号 709・3-2・94.2' : '例: 民709・会社2条1項'}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         aria-label="条番号検索"
       />
+      {route.lawId && (
+        <button
+          type="button"
+          className="kb-toggle"
+          onClick={() => {
+            refocus.current = true;
+            setTextKb((v) => !v);
+          }}
+          aria-label={numeric ? '通常のキーボードにする' : 'テンキーにする'}
+        >
+          {numeric ? 'あ' : '123'}
+        </button>
+      )}
       <button type="submit">移動</button>
     </form>
   );
@@ -77,7 +111,7 @@ export default function App() {
   if (loadError) body = <p className="notice">{loadError}</p>;
   else if (!laws) body = <p className="notice">読み込み中…</p>;
   else if (route.lawId)
-    body = <LawView laws={laws} route={route} searchBox={searchBox} onMessage={setMessage} />;
+    body = <LawView laws={laws} route={route} searchBox={searchBox} onMessage={setMessage} onGo={go} />;
   else body = <Home laws={laws} searchBox={searchBox} onMessage={setMessage} />;
 
   return (

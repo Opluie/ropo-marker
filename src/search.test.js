@@ -18,6 +18,10 @@ describe('kanjiToInt', () => {
 describe('normalize', () => {
   test('全角・空白・漢数字', () => expect(normalize('民法　第七百九条')).toBe('民法第709条'));
   test('ハイフンは「の」', () => expect(normalize('709-2')).toBe('709の2'));
+  test('点は項・号（テンキー用）', () => {
+    expect(normalize('94.2')).toBe('94第2項');
+    expect(normalize('3-2.1.4')).toBe('3の2第1項第4号');
+  });
 });
 
 describe('parseQuery', () => {
@@ -27,6 +31,7 @@ describe('parseQuery', () => {
     ['民法第七百九条', { lawId: 'MIN', key: '709' }],
     ['民 94 2項', { lawId: 'MIN', key: '94', para: 2 }],
     ['民3の2', { lawId: 'MIN', key: '3_2' }],
+    ['民94.2', { lawId: 'MIN', key: '94', para: 2 }],
     ['民訴248', { lawId: 'MINSO', key: '248' }], // 「民」より長い「民訴」を優先
     ['民事訴訟法248条', { lawId: 'MINSO', key: '248' }],
     ['会社2条1項3号', { lawId: 'KAI', key: '2', para: 1, item: 3 }],

@@ -4,7 +4,7 @@
     py scripts/convert_laws.py
 
 出力:
-    public/laws/{法令ID}.json  条文本体（条・項・号の入れ子。仕様書 §4.3）
+    public/laws/{法令ID}.json  条文本体（条・項・号の入れ子と参照リンク。仕様書 §4.3・§4.5）
     public/laws/index.json     法令一覧（アプリの目次・検索用）
 
 扱えない要素（表・図など）は本文を落とさず "unsupported" として残し、件数を報告する。
@@ -13,6 +13,8 @@ import json
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+from refs import RefFinder
 
 ROOT = Path(__file__).resolve().parent.parent
 LAWS_FILE = ROOT / "data" / "laws.json"
@@ -168,7 +170,7 @@ class Converter:
 def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     confs = {c["title"]: c for c in json.loads(LAWS_FILE.read_text(encoding="utf-8"))}
-    index = []
+    converted = []
     total_warnings = 0
     for meta_path in sorted(RAW_DIR.glob("*.meta.json")):
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -177,14 +179,22 @@ def main():
             continue  # laws.json から外した法令の残骸
         conv = Converter()
         law = conv.law((RAW_DIR / f"{meta['lawId']}.xml").read_bytes(), meta, conf)
-        (OUT_DIR / f"{meta['lawId']}.json").write_text(
-            json.dumps(law, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-        index.append({k: law[k] for k in ("lawId", "title", "abbr", "group", "enforcementDate")}
-                     | {"articleCount": len(law["articles"])})
+        converted.append(law)
         for w in conv.warnings:
             print(f"  WARN {meta['title']} {w}")
         total_warnings += len(conv.warnings)
         print(f"OK   {meta['title']}: 本則 {len(law['articles'])} 条・附則 {len(law['suppl'])} 件")
+
+    # 参照リンクは全法令の条がそろってから付ける（他法令の参照先を確かめるため）
+    finder = RefFinder(converted)
+    index = []
+    for law in converted:
+        finder.annotate(law)
+        (OUT_DIR / f"{law['lawId']}.json").write_text(
+            json.dumps(law, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        index.append({k: law[k] for k in ("lawId", "title", "abbr", "group", "enforcementDate")}
+                     | {"articleCount": len(law["articles"])})
+    print(f"参照リンク: 条が見つからず外したもの {len(finder.unresolved)} 件")
 
     order = {c["title"]: i for i, c in enumerate(confs.values())}
     index.sort(key=lambda x: order[x["title"]])

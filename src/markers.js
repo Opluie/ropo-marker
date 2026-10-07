@@ -4,12 +4,21 @@
 // 改正後に探し直すための quote（塗った文字列と前後の文字）で持つ。
 // 1つの loc の中でマーカーは重ならない（後から塗った色で上書きする）。
 
-export const COLORS = ['yellow', 'green', 'orange'];
-// 試作版（2026-09-24）の色 → 今の色。端末に残っているマーカーと書き出しファイルを読み替える
-const OLD_COLORS = { red: 'orange', blue: 'green' };
+export const COLORS = ['yellow', 'green'];
+// 昔の色 → 今の色（null は廃止＝読み込まない）。端末に残っているマーカーと書き出しファイルを読み替える。
+// 試作版（2026-09-24）の赤・青は橙・緑に読み替えていた。橙は 2026-10-07 に廃止
+// （条番号を目立たせる用途だったが、マーカーを引いた項の番号に自動で色が付くようになったため）
+const OLD_COLORS = { red: null, orange: null, blue: 'green' };
 
+/** 今の色に読み替えたマーカー。廃止した色なら null */
 export function upgradeColor(m) {
-  return m && OLD_COLORS[m.color] ? { ...m, color: OLD_COLORS[m.color] } : m;
+  if (!m || !(m.color in OLD_COLORS)) return m;
+  return OLD_COLORS[m.color] ? { ...m, color: OLD_COLORS[m.color] } : null;
+}
+
+/** マーカーの配列を今の色に読み替え、廃止した色のものを除く */
+export function upgradeColors(list) {
+  return list.map(upgradeColor).filter(Boolean);
 }
 export const ERASE = 'erase';
 const CONTEXT = 20; // quote の前後に残す文字数
@@ -180,7 +189,7 @@ export function parseBackup(json) {
   if (data?.app !== BACKUP_APP || !Array.isArray(data.markers))
     throw new Error('六法マーカーの書き出しファイルではありません');
   if (data.version > BACKUP_VERSION) throw new Error('新しい版のアプリで書き出したファイルです。アプリを更新してください');
-  const markers = data.markers.map(upgradeColor);
+  const markers = upgradeColors(data.markers);
   const bad = markers.filter((m) => !isMarker(m)).length;
   if (bad) throw new Error(`壊れたマーカーが ${bad} 件あります`);
   return markers;

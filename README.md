@@ -10,7 +10,7 @@
 ```
 py scripts/fetch_laws.py
 py scripts/convert_laws.py
-py -m unittest scripts/test_convert.py -v
+py -m unittest scripts/test_convert.py scripts/test_refs.py -v
 ```
 
 ## 画面の開発
@@ -18,7 +18,7 @@ py -m unittest scripts/test_convert.py -v
 ```
 npm install
 npm run dev      # 開発用サーバー
-npm test         # 検索・マーカー計算・目次のテスト
+npm test         # 検索・マーカー計算・目次・参照リンク表示のテスト
 npm run build    # dist/ に公開用ファイルを出力
 ```
 
